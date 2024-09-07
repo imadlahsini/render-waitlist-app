@@ -1,361 +1,365 @@
-<!DOCTYPE html>  
-<html lang="fr">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Patients Dashboard</title>  
-    <style>  
-        body {  
-            font-family: 'Arial', sans-serif;  
-            background-color: #f8f9fa;  
-            margin: 0;  
-            padding: 0;  
-            display: flex;  
-            justify-content: center;  
-            align-items: flex-start;  
-            min-height: 100vh;  
-            padding: 40px;  
-        }  
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patients Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px;
+        }
 
-        .container {  
-            width: 100%;  
-            max-width: 900px;  
-            background-color: white;  
-            border-radius: 12px;  
-            padding: 40px;  
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);  
-        }  
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
 
-        nav {  
-            display: flex;  
-            justify-content: space-between;  
-            align-items: center;  
-            margin-bottom: 20px;  
-        }  
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-        nav h1 {  
-            font-size: 24px;  
-            font-weight: bold;  
-            color: #2f3640;  
-        }  
+        nav h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2f3640;
+        }
 
-        nav ul {  
-            list-style: none;  
-            display: flex;  
-            gap: 20px;  
-        }  
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
 
-        nav ul li {  
-            cursor: pointer;  
-            color: #00a8ff;  
-        }  
+        nav ul li {
+            cursor: pointer;
+            color: #00a8ff;
+        }
 
-        h2 {  
-            font-size: 28px;  
-            font-weight: 700;  
-            text-align: center;  
-            color: #2f3640;  
-            margin-bottom: 40px;  
-        }  
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            color: #2f3640;
+            margin-bottom: 40px;
+        }
 
-        .input-section {  
-            display: flex;  
-            flex-direction: column;  
-            gap: 20px;  
-            margin-bottom: 30px;  
-        }  
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-        .input-section input, .input-section select {  
-            padding: 12px;  
-            font-size: 16px;  
-            border-radius: 6px;  
-            border: 1px solid #ddd;  
-            width: 100%;  
-            box-sizing: border-box;  
-        }  
+        .input-section input, .input-section select {
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-        .input-section select:focus, .input-section input:focus {  
-            border-color: #00a8ff;  
-            box-shadow: 0 0 5px rgba(0, 168, 255, 0.3);  
-        }  
+        .input-section select:focus, .input-section input:focus {
+            border-color: #00a8ff;
+            box-shadow: 0 0 5px rgba(0, 168, 255, 0.3);
+        }
 
-        .input-section button {  
-            background-color: #00a8ff;  
-            color: white;  
-            border: none;  
-            padding: 12px 20px;  
-            border-radius: 6px;  
-            font-size: 16px;  
-            cursor: pointer;  
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;  
-            text-align: center;  
-            box-shadow: 0 4px 15px rgba(0, 168, 255, 0.1);  
-        }  
+        .time-visit-wrapper {
+            display: flex;
+            gap: 10px;
+        }
 
-        .input-section button:hover {  
-            background-color: #0097e6;  
-            box-shadow: 0 6px 18px rgba(0, 151, 230, 0.3);  
-        }  
+        .input-section button {
+            background-color: #00a8ff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 168, 255, 0.1);
+        }
 
-        .error-popup {  
-            display: none;  
-            position: fixed;  
-            top: 20px;  
-            left: 50%;  
-            transform: translateX(-50%);  
-            background-color: #e74c3c;  
-            color: white;  
-            padding: 10px 20px;  
-            border-radius: 6px;  
-            font-size: 16px;  
-            z-index: 1000;  
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);  
-        }  
+        .input-section button:hover {
+            background-color: #0097e6;
+            box-shadow: 0 6px 18px rgba(0, 151, 230, 0.3);
+        }
 
-        .patient-list ul {  
-            list-style: none;  
-            padding: 0;  
-        }  
+        .error-popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
 
-        .patient-list li {  
-            background-color: #ecf0f1;  
-            padding: 15px;  
-            margin-bottom: 15px;  
-            border-radius: 10px;  
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);  
-            display: flex;  
-            justify-content: space-between;  
-            align-items: center;  
-        }  
+        .patient-list ul {
+            list-style: none;
+            padding: 0;
+        }
 
-        .patient-list li.rdv {  
-            background-color: #d4edda;  
-            border-left: 4px solid #27ae60;  
-        }  
+        .patient-list li {
+            background-color: #ecf0f1;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        .patient-list .patient-details {  
-            font-size: 18px;  
-            font-weight: 600;  
-            color: #333;  
-        }  
+        .patient-list li.rdv {
+            background-color: #d4edda;
+            border-left: 4px solid #27ae60;
+        }
 
-        .patient-list .patient-time {  
-            font-size: 16px;  
-            color: #2980b9;  
-            font-weight: 600;  
-        }  
+        .patient-list .patient-details {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
 
-        .patient-list button {  
-            background-color: #e74c3c;  
-            color: white;  
-            border: none;  
-            padding: 8px 12px;  
-            border-radius: 5px;  
-            cursor: pointer;  
-            font-size: 14px;  
-            transition: background-color 0.3s ease;  
-        }  
+        .patient-list .patient-time {
+            font-size: 16px;
+            color: #2980b9;
+            font-weight: 600;
+        }
 
-        .patient-list button:hover {  
-            background-color: #c0392b;  
-        }  
-    </style>  
-</head>  
-<body>  
+        .patient-list button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
 
-<nav>  
-    <h1>Patients Dashboard</h1>  
-    <ul>  
-        <li>Patients</li>  
-        <li>Settings</li>  
-    </ul>  
-</nav>  
+        .patient-list button:hover {
+            background-color: #c0392b;
+        }
 
-<div class="error-popup" id="errorPopup">Erreur: Veuillez vérifier vos entrées.</div>  
+        @media (max-width: 600px) {
+            .input-section {
+                flex-direction: column;
+            }
 
-<div class="container">  
-    <h2>Tableau d'attente des patients</h2>  
+            .time-picker {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
 
-    <div class="input-section">  
-        <input type="text" id="patientName" placeholder="Entrez le nom du patient">  
+<nav>
+    <h1>Patients Dashboard</h1>
+    <ul>
+        <li>Patients</li>
+        <li>Settings</li>
+    </ul>
+</nav>
 
-        <div class="time-picker">  
-            <select id="hourPicker">  
-                <option value="07">07</option>  
-                <option value="08">08</option>  
-                <option value="09">09</option>  
-                <option value="10">10</option>  
-                <option value="11">11</option>  
-                <option value="12">12</option>  
-                <option value="13">13</option>  
-                <option value="14">14</option>  
-                <option value="15">15</option>  
-                <option value="16">16</option>  
-                <option value="17">17</option>  
-                <option value="18">18</option>  
-                <option value="19">19</option>  
-            </select>  
-            <select id="minutePicker">  
-                <option value="00">00</option>  
-                <option value="15">15</option>  
-                <option value="30">30</option>  
-                <option value="45">45</option>  
-            </select>  
-        </div>  
+<div class="error-popup" id="errorPopup">Erreur: Veuillez vérifier vos entrées.</div>
 
-        <select id="visitType">  
-            <option value="Walkin">Walk-in</option>  
-            <option value="RDV">RDV</option>  
-        </select>  
+<div class="container">
+    <h2>Tableau d'attente des patients</h2>
 
-        <button onclick="addPatient()">Ajouter un patient</button>  
-    </div>  
+    <div class="input-section">
+        <input type="text" id="patientName" placeholder="Entrez le nom du patient">
 
-    <div class="patient-list">  
-        <ul id="patientList"></ul>  
-    </div>  
-</div>  
+        <div class="time-picker">
+            <select id="hourPicker">
+                <option value="07">07</option>
+                <option value="08">08</option>
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+            </select>
+            <select id="minutePicker">
+                <option value="00">00</option>
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="45">45</option>
+            </select>
+        </div>
 
-<script>  
-    let takenSlots = [];  
-    let errorTimeout;  
+        <select id="visitType">
+            <option value="Walkin">Walk-in</option>
+            <option value="RDV">RDV</option>
+        </select>
 
-    function showError(message) {  
-        const errorPopup = document.getElementById('errorPopup');  
-        errorPopup.textContent = message;  
-        errorPopup.style.display = 'block';  
-        
-        clearTimeout(errorTimeout); // Clear previous error timer if any  
-        errorTimeout = setTimeout(() => errorPopup.style.display = 'none', 3000);  
-    }  
+        <button onclick="addPatient()">Ajouter un patient</button>
+    </div>
 
-    async function fetchPatients() {  
-        try {  
-            const response = await fetch('/api/waitlist');  
-            if (!response.ok) throw new Error('Failed to fetch patients');  
-            const patients = await response.json();  
-            return patients;  
-        } catch (error) {  
-            showError('Error fetching patients.');  
-            console.error(error);  
-        }  
-    }  
+    <div class="patient-list">
+        <ul id="patientList"></ul>
+    </div>
+</div>
 
-    async function displayPatients() {  
-        const patients = await fetchPatients();  
-        const list = document.getElementById('patientList');  
-        list.innerHTML = '';  
+<script>
+    let takenSlots = [];
+    let errorTimer;
 
-        takenSlots = []; // Clear taken slots before updating  
+    function showError(message) {
+        clearTimeout(errorTimer);  // Clear previous error timer
+        const errorPopup = document.getElementById('errorPopup');
+        errorPopup.textContent = message;
+        errorPopup.style.display = 'block';
+        errorTimer = setTimeout(() => errorPopup.style.display = 'none', 3000);  // Set new error timeout
+    }
 
-        if (patients) {  
-            patients.sort((a, b) => a.time.localeCompare(b.time)); // Sort by time  
+    async function fetchPatients() {
+        try {
+            const response = await fetch('/api/waitlist');
+            if (!response.ok) throw new Error('Network response was not ok');
+            const patients = await response.json();
+            return patients;
+        } catch (error) {
+            console.error('Fetch error:', error);
+            showError('Failed to fetch patient data.');
+        }
+    }
 
-            patients.forEach((patient, index) => {  
-                const li = document.createElement('li');  
-                li.className = patient.type === 'RDV' ? 'rdv' : '';  
+    async function displayPatients() {
+        takenSlots = [];  // Reset taken slots before updating
 
-                li.innerHTML = `  
-                    <span class="patient-details">${index + 1}. ${patient.name}</span>  
-                    <span class="patient-time">${patient.time}</span>  
-                    <button onclick="removePatient(${patient.id})">Supprimer</button>  
-                `;  
-                list.appendChild(li);  
+        const patients = await fetchPatients();
+        const list = document.getElementById('patientList');
+        list.innerHTML = ''; 
 
-                takenSlots.push(patient.time); // Add taken slot to the list  
-            });  
-            filterMinutes(); // Update available times  
-        }  
-    }  
+        patients.sort((a, b) => a.time.localeCompare(b.time));  // Sort by time
 
-    async function addPatient() {  
-        const patientName = document.getElementById('patientName').value.trim();  
-        const selectedHour = document.getElementById('hourPicker').value;  
-        const selectedMinute = document.getElementById('minutePicker').value;  
-        const patientTime = `${selectedHour}:${selectedMinute}`;  
-        const visitType = document.getElementById('visitType').value;  
+        patients.forEach((patient, index) => {
+            const li = document.createElement('li');
+            li.className = patient.type === 'RDV' ? 'rdv' : '';
 
-        if (patientName === '' || takenSlots.includes(patientTime)) {  
-            showError('Ce créneau est déjà pris ou le nom du patient est vide.');  
-            return;  
-        }  
+            li.innerHTML = `
+                <span class="patient-details">${index + 1}. ${patient.name}</span>
+                <span class="patient-time">${patient.time}</span>
+                <button onclick="removePatient(${patient.id})">Supprimer</button>
+            `;
+            list.appendChild(li);
 
-        const patient = { name: patientName, time: patientTime, type: visitType };  
+            takenSlots.push(patient.time);  // Add taken slot to the list
+        });
+        filterMinutes();  // Update available times
+    }
 
-        try {  
-            await fetch('/api/waitlist', {  
-                method: 'POST',  
-                headers: {  
-                    'Content-Type': 'application/json'  
-                },  
-                body: JSON.stringify(patient)  
-            });  
+    async function addPatient() {
+        const patientName = document.getElementById('patientName').value.trim();
+        const selectedHour = document.getElementById('hourPicker').value;
+        const selectedMinute = document.getElementById('minutePicker').value;
+        const patientTime = `${selectedHour}:${selectedMinute}`;
+        const visitType = document.getElementById('visitType').value;
 
-            displayPatients();  
-            filterMinutes();  
-            document.getElementById('patientName').value = '';  
-        } catch (error) {  
-            showError('Error adding patient.');  
-            console.error(error);  
-        }  
-    }  
+        if (patientName === '' || takenSlots.includes(patientTime)) {
+            showError('Ce créneau est déjà pris ou le nom du patient est vide.');
+            return;
+        }
 
-    async function removePatient(id) {  
-        try {  
-            await fetch(`/api/waitlist/${id}`, {  
-                method: 'DELETE'  
-            });  
-            displayPatients();  
-            filterMinutes();  
-        } catch (error) {  
-            showError('Error removing patient.');  
-            console.error(error);  
-        }  
-    }  
+        const patient = { name: patientName, time: patientTime, type: visitType };
 
-    function filterMinutes() {  
-        const hour = document.getElementById('hourPicker').value;  
-        const minuteSelect = document.getElementById('minutePicker');  
-        const currentMinutes = minuteSelect.value;  
+        await fetch('/api/waitlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(patient)
+        });
 
-        minuteSelect.innerHTML = `  
-            <option value="00">00</option>  
-            <option value="15">15</option>  
-            <option value="30">30</option>  
-            <option value="45">45</option>  
-        `;  
+        displayPatients();
+        filterMinutes();
+        document.getElementById('patientName').value = '';
+    }
 
-        takenSlots.forEach(time => {  
-            const [takenHour, takenMinute] = time.split(':');  
-            if (takenHour === hour) {  
-                const optionToDisable = minuteSelect.querySelector(`option[value="${takenMinute}"]`);  
-                if (optionToDisable) optionToDisable.disabled = true;  
-            }  
-        });  
+    async function removePatient(id) {
+        await fetch(`/api/waitlist/${id}`, {
+            method: 'DELETE'
+        });
+        displayPatients();
+        filterMinutes();
+    }
 
-        if (!minuteSelect.querySelector(`option[value="${currentMinutes}"]:not([disabled])`)) {  
-            minuteSelect.value = '00';  
-        }  
-    }  
+    function filterMinutes() {
+        const hour = document.getElementById('hourPicker').value;
+        const minuteSelect = document.getElementById('minutePicker');
+        const currentMinutes = minuteSelect.value;
 
-    function resetWaitlist() {  
-        const now = new Date();  
-        const nextMidnight = new Date(now);  
-        nextMidnight.setHours(24, 0, 0, 0); // Reset at midnight  
-        const timeout = nextMidnight.getTime() - now.getTime();  
-        setTimeout(async () => {  
-            await fetch('/api/reset', { method: 'POST' });  
-            displayPatients();  
-            resetWaitlist();  
-        }, timeout);  
-    }  
+        minuteSelect.innerHTML = `
+            <option value="00">00</option>
+            <option value="15">15</option>
+            <option value="30">30</option>
+            <option value="45">45</option>
+        `;
 
-    window.onload = function() {  
-        displayPatients();  
-        filterMinutes();  
-        resetWaitlist();  
-    };  
-</script>  
+        takenSlots.forEach(time => {
+            const [takenHour, takenMinute] = time.split(':');
+            if (takenHour === hour) {
+                const optionToDisable = minuteSelect.querySelector(`option[value="${takenMinute}"]`);
+                if (optionToDisable) optionToDisable.disabled = true;
+            }
+        });
 
-</body>  
-</html>  
+        if (minuteSelect.querySelector(`option[value="${currentMinutes}"]:not([disabled])`)) {
+            minuteSelect.value = currentMinutes;
+        } else {
+            minuteSelect.value = '00';  // Default to the first available minute
+        }
+    }
+
+    function resetWaitlist() {
+        const now = new Date();
+        const nextMidnight = new Date(now);
+        nextMidnight.setHours(24, 0, 0, 0);  // Reset at midnight
+        const timeout = nextMidnight.getTime() - now.getTime();
+        setTimeout(async () => {
+            await fetch('/api/reset', { method: 'POST' });
+            displayPatients();
+            resetWaitlist();
+        }, timeout);
+    }
+
+    window.onload = function() {
+        displayPatients();
+        filterMinutes();
+        resetWaitlist();
+    };
+</script>
+
+</body>
+</html>
