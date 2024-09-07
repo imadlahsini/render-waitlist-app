@@ -1,46 +1,60 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const { Pool } = require('pg');  // PostgreSQL client
 
-// In-memory storage to store the waitlist
-let waitlist = [];
+// Setup PostgreSQL connection using DATABASE_URL from environment variables
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
 
-// Serve static HTML files (dashboard and display)
+app.use(express.json()); // For parsing application/json
+
+// Serve static files
 app.use(express.static('public'));
 
-// API to get the current waitlist
-app.get('/api/waitlist', (req, res) => res.json(waitlist));
+// API to get the current waitlist from PostgreSQL
+app.get('/api/waitlist', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM waitlist ORDER BY time ASC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
 
 // API to add a customer to the waitlist
-app.post('/api/waitlist', express.json(), (req, res) => {
-    waitlist.push(req.body);
-    waitlist.sort((a, b) => a.time.localeCompare(b.time));  // Sort by time
-    res.json(waitlist);
+app.post('/api/waitlist', async (req, res) => {
+  const { name, time, type } = req.body;
+  try {
+    await pool.query('INSERT INTO waitlist (name, time, type) VALUES ($1, $2, $3)', [name, time, type]);
+    const result = await pool.query('SELECT * FROM waitlist ORDER BY time ASC');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
-// API to remove a customer from the waitlist
-app.delete('/api/waitlist/:index', (req, res) => {
-    const index = req.params.index;
-    if (index >= 0 && index < waitlist.length) {
-        waitlist.splice(index, 1);  // Remove the customer
-        res.json(waitlist);
-    } else {
-        res.status(400).json({ error: 'Invalid index' });
-    }
-});
-
-// API to reset the waitlist (clear all customers)
-app.post('/api/reset', (req, res) => {
-    waitlist = [];
+// API to reset the waitlist at midnight GMT+1
+app.post('/api/reset', async (req, res) => {
+  try {
+    await pool.query('DELETE FROM waitlist');
     res.json({ message: 'Waitlist reset' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
-// Serve the dashboard page
+// Serve the HTML pages
 app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
-
-// Serve the display page
 app.get('/display', (req, res) => res.sendFile(path.join(__dirname, 'public', 'display.html')));
 
-// Start the server on the correct port (Render or fallback to 3000 for local dev)
+// Set up server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
