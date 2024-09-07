@@ -172,31 +172,9 @@
         <button onclick="addPatient()">Ajouter un patient</button>
     </div>
 
-    <!-- Cards Code v1 -->
     <div class="patient-list">
-        <ul>
-            <li>
-                <span class="patient-details">1. John Doe</span>
-                <span class="patient-time">10:15</span>
-                <span class="visit-type">RDV</span>
-                <button onclick="removePatient(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M13.485 2.485a.75.75 0 0 1 0 1.06l-7.07 7.071a.75.75 0 0 1-1.06 0L2.485 7.485a.75.75 0 1 1 1.06-1.06L5.9 8.778l6.525-6.526a.75.75 0 0 1 1.06 0z"/>
-                    </svg>
-                    Servi
-                </button>
-            </li>
-            <li>
-                <span class="patient-details">2. Jane Smith</span>
-                <span class="patient-time">11:00</span>
-                <span class="visit-type">Walk-in</span>
-                <button onclick="removePatient(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M13.485 2.485a.75.75 0 0 1 0 1.06l-7.07 7.071a.75.75 0 0 1-1.06 0L2.485 7.485a.75.75 0 1 1 1.06-1.06L5.9 8.778l6.525-6.526a.75.75 0 0 1 1.06 0z"/>
-                    </svg>
-                    Servi
-                </button>
-            </li>
+        <ul id="patientList">
+            <!-- No dummy data, dynamic content will be here -->
         </ul>
     </div>
 </div>
