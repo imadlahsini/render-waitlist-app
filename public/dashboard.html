@@ -108,6 +108,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
         .patient-list li.rdv {
@@ -128,6 +130,18 @@
             color: #2980b9;
             font-weight: 600;
             margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .patient-time::before {
+            content: '⏰';
+            margin-right: 8px;
+        }
+
+        .visit-type::before {
+            content: '📅';
+            margin-right: 8px;
         }
 
         .patient-list button {
@@ -143,6 +157,11 @@
 
         .patient-list button:hover {
             background-color: #218838;
+        }
+
+        .patient-list li.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
         }
     </style>
 </head>
@@ -236,7 +255,7 @@
                     <span class="patient-details">${index + 1}. ${patient.name}</span>
                     <span class="patient-time">${patient.time}</span>
                     <span class="visit-type">${patient.type}</span>
-                    <button onclick="removePatient(${patient.id})">Servi</button>
+                    <button onclick="removePatient(${patient.id}, this)">Servi</button>
                 `;
                 list.appendChild(li);
 
@@ -278,17 +297,21 @@
         }
     }
 
-    async function removePatient(id) {
-        try {
-            await fetch(`/api/waitlist/${id}`, {
-                method: 'DELETE'
-            });
-            displayPatients();
-            filterMinutes();
-        } catch (error) {
-            showError('Error removing patient: ' + error.message);
-            console.error(error);
-        }
+    async function removePatient(id, button) {
+        const li = button.closest('li');
+        li.classList.add('fade-out');
+        setTimeout(async () => {
+            try {
+                await fetch(`/api/waitlist/${id}`, {
+                    method: 'DELETE'
+                });
+                displayPatients();
+                filterMinutes();
+            } catch (error) {
+                showError('Error removing patient: ' + error.message);
+                console.error(error);
+            }
+        }, 300); // Delay to match the fade-out animation
     }
 
     function filterMinutes() {
