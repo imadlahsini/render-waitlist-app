@@ -1,9 +1,9 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const { Pool } = require('pg');  // PostgreSQL client
+const { Pool } = require('pg');
 
-// Set up PostgreSQL connection using the connection string from the environment variable
+// PostgreSQL setup: Connect to the database using the environment variable
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -11,7 +11,20 @@ const pool = new Pool({
   }
 });
 
-app.use(express.json()); // To parse JSON bodies
+app.use(express.json()); // To parse JSON request bodies
+
+// Serve static files from the "public" folder
+app.use(express.static('public'));
+
+// Serve the dashboard page when someone visits "/dashboard"
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
+
+// Serve the display page when someone visits "/display" (optional)
+app.get('/display', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'display.html'));
+});
 
 // API to fetch the current waitlist from PostgreSQL
 app.get('/api/waitlist', async (req, res) => {
@@ -50,9 +63,8 @@ app.delete('/api/waitlist/:id', async (req, res) => {
   }
 });
 
-// Serve static HTML files
-app.use(express.static('public'));
-
-// Set up server
+// Start the server on port 3000 or the port provided by Railway
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
