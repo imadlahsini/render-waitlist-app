@@ -1,70 +1,105 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau d'attente des clients</title>
     <style>
-        /* Add your styling here */
+        /* Keeping your original styles here */
+        /* No design changes */
     </style>
 </head>
 <body>
 
-<div>
-    <h2>Tableau d'attente des clients</h2>
+<div class="error-popup" id="errorPopup">Erreur: Veuillez vérifier vos entrées.</div>
 
-    <input type="text" id="customerName" placeholder="Entrez le nom du client">
-    <select id="hourPicker">
-        <!-- Add hour options (07 to 19) -->
-    </select>
-    <select id="minutePicker">
-        <!-- Add minute options (00, 15, 30, 45) -->
-    </select>
-    <select id="visitType">
-        <option value="Walkin">Walk-in</option>
-        <option value="RDV">RDV</option>
-    </select>
+<div class="container">
+    <div class="header">
+        <h2>Tableau d'attente des clients</h2>
+    </div>
 
-    <button onclick="addCustomer()">Ajouter un client</button>
-</div>
+    <div class="input-section">
+        <input type="text" id="customerName" placeholder="Entrez le nom du client">
+        <div class="time-picker">
+            <select id="hourPicker">
+                <!-- Add hour options (07 to 19) -->
+            </select>
+            <select id="minutePicker">
+                <!-- Add minute options (00, 15, 30, 45) -->
+            </select>
+        </div>
+        <select id="visitType">
+            <option value="Walkin">Walk-in</option>
+            <option value="RDV">RDV</option>
+        </select>
 
-<div>
-    <h3>Liste des clients</h3>
-    <ul id="customerList"></ul>
+        <button onclick="addCustomer()">Ajouter un client</button>
+    </div>
+
+    <div class="customer-list">
+        <ul id="customerList"></ul>
+    </div>
 </div>
 
 <script>
+    let takenSlots = [];
+
+    // Show error popup function
+    function showError(message) {
+        const errorPopup = document.getElementById('errorPopup');
+        errorPopup.textContent = message;
+        errorPopup.style.display = 'block';
+
+        setTimeout(() => {
+            errorPopup.style.display = 'none';
+        }, 3000);
+    }
+
+    // Fetch customers from PostgreSQL via API
     async function fetchCustomers() {
         const response = await fetch('/api/waitlist');
         const customers = await response.json();
         return customers;
     }
 
+    // Display customers from PostgreSQL
     async function displayCustomers() {
         const customers = await fetchCustomers();
         const list = document.getElementById('customerList');
-        list.innerHTML = '';
+        list.innerHTML = ''; // Clear previous list
 
         customers.forEach((customer, index) => {
+            const customerClass = customer.type === 'RDV' ? 'rdv' : '';
             const li = document.createElement('li');
-            li.innerHTML = `${index + 1}. ${customer.name} (${customer.time}) - ${customer.type}`;
+            li.className = customerClass;
+
+            li.innerHTML = `<span class="customer-details">${index + 1}. ${customer.name}</span>
+                            <span class="customer-time">${customer.time}</span>
+                            <span class="customer-type">${customer.type}</span>
+                            <button onclick="removeCustomer(${index})">Supprimer</button>`;
             list.appendChild(li);
         });
     }
 
+    // Add a customer to the PostgreSQL database
     async function addCustomer() {
-        const name = document.getElementById('customerName').value;
-        const hour = document.getElementById('hourPicker').value;
-        const minute = document.getElementById('minutePicker').value;
-        const time = `${hour}:${minute}`;
-        const type = document.getElementById('visitType').value;
+        const customerName = document.getElementById('customerName').value.trim();
+        const selectedHour = document.getElementById('hourPicker').value;
+        const selectedMinute = document.getElementById('minutePicker').value;
+        const customerTime = `${selectedHour}:${selectedMinute}`;
+        const visitType = document.getElementById('visitType').value;
 
-        if (!name || !time) {
-            alert('Veuillez entrer toutes les informations');
+        if (customerName === '') {
+            showError('Veuillez entrer le nom du client');
             return;
         }
 
-        const customer = { name, time, type };
+        if (takenSlots.includes(customerTime)) {
+            showError("Cette plage horaire est déjà réservée. Veuillez en choisir une autre.");
+            return;
+        }
+
+        const customer = { name: customerName, time: customerTime, type: visitType };
 
         await fetch('/api/waitlist', {
             method: 'POST',
@@ -75,10 +110,67 @@
         });
 
         displayCustomers();
+        filterMinutes();
+        document.getElementById('customerName').value = '';
     }
 
-    // Fetch and display customers when the page loads
-    displayCustomers();
+    // Remove customer (modify this to remove from DB using an ID or index)
+    async function removeCustomer(index) {
+        await fetch(`/api/waitlist/${index}`, {
+            method: 'DELETE'
+        });
+        displayCustomers();
+        filterMinutes();
+    }
+
+    // Filter available minutes based on taken slots
+    function filterMinutes() {
+        const hour = document.getElementById('hourPicker').value;
+        const minuteSelect = document.getElementById('minutePicker');
+        const currentMinutes = minuteSelect.value;
+
+        minuteSelect.innerHTML = `
+            <option value="00">00</option>
+            <option value="15">15</option>
+            <option value="30">30</option>
+            <option value="45">45</option>
+        `;
+
+        takenSlots.forEach(time => {
+            const [takenHour, takenMinute] = time.split(':');
+            if (takenHour === hour) {
+                const optionToDisable = minuteSelect.querySelector(`option[value="${takenMinute}"]`);
+                if (optionToDisable) optionToDisable.disabled = true;
+            }
+        });
+
+        if (minuteSelect.querySelector(`option[value="${currentMinutes}"]:not([disabled])`)) {
+            minuteSelect.value = currentMinutes;
+        } else {
+            minuteSelect.value = '00';
+        }
+    }
+
+    // Reset waitlist at midnight (as per your requirement)
+    function resetWaitlist() {
+        const now = new Date();
+        const nextMidnight = new Date(now);
+        nextMidnight.setHours(24, 0, 0, 0); // Next midnight
+
+        const timeout = nextMidnight.getTime() - now.getTime();
+
+        setTimeout(async () => {
+            await fetch('/api/reset', { method: 'POST' });
+            displayCustomers();
+            resetWaitlist(); // Re-schedule the reset for the next midnight
+        }, timeout);
+    }
+
+    window.onload = function() {
+        displayCustomers();
+        filterMinutes();
+        resetWaitlist(); // Initialize the reset function on load
+    };
 </script>
 
 </body>
