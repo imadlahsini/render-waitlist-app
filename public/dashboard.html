@@ -101,11 +101,10 @@
 
         .patient-list li {  
             background-color: #ffffff;  
-            border: 1px solid #00a8ff;  
             padding: 18px; /* Increased by 20% */  
             margin-bottom: 20px;  
             border-radius: 12px;  
-            box-shadow: 0 4px 20px rgba(0, 168, 255, 0.1);  
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Changed from blue border to subtle shadow */  
             display: flex;  
             justify-content: space-between;  
             align-items: center;  
@@ -132,18 +131,18 @@
         }  
 
         .patient-list button {  
-            background-color: #e74c3c;  
+            background-color: #28a745; /* Changed to green */  
             color: white;  
             border: none;  
-            padding: 9.6px 19.2px; /* Increased by 20% */  
-            border-radius: 8px;  
+            padding: 10px 20px; /* Adjusted padding */  
+            border-radius: 12px; /* More rounded button design */  
             cursor: pointer;  
             font-size: 17px; /* Increased by 20% */  
             transition: background-color 0.3s ease;  
         }  
 
         .patient-list button:hover {  
-            background-color: #c0392b;  
+            background-color: #218838; /* Darker green on hover */  
         }  
     </style>  
 </head>  
@@ -237,7 +236,7 @@
                     <span class="patient-details">${index + 1}. ${patient.name}</span>  
                     <span class="patient-time">${patient.time}</span>  
                     <span class="visit-type">${patient.type}</span>  
-                    <button onclick="removePatient(${patient.id})">Supprimer</button>  
+                    <button onclick="removePatient(${patient.id})">Servi</button>  
                 `;  
                 list.appendChild(li);  
 
