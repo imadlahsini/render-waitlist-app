@@ -41,5 +41,6 @@ app.get('/dashboard', (req, res) => res.sendFile(path.join(__dirname, 'public', 
 // Serve the display page
 app.get('/display', (req, res) => res.sendFile(path.join(__dirname, 'public', 'display.html')));
 
-// Start the server on port 3000 (or use Heroku/Render's port)
-app.listen(process.env.PORT || 3000, () => console.log('Server is running'));
+// Start the server on the correct port (Render or fallback to 3000 for local dev)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
