@@ -9,11 +9,12 @@
             font-family: 'Arial', sans-serif;
             background-color: #f5f6fa;
             margin: 0;
-            padding: 40px;
+            padding: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
+            padding: 40px;
         }
 
         .container {
@@ -29,6 +30,7 @@
         h2 {
             font-size: 33.6px;
             font-weight: 700;
+            text-align: center;
             color: #2f3640;
             margin-bottom: 40px;
         }
@@ -40,12 +42,23 @@
             margin-bottom: 30px;
         }
 
+        .time-visit-wrapper {
+            display: flex;
+            gap: 15px;
+        }
+
         .input-section input, .input-section select {
             padding: 14.4px;
             font-size: 19.2px;
             border-radius: 8px;
             border: 1px solid #ddd;
             width: 100%;
+            box-sizing: border-box;
+        }
+
+        .input-section select:focus, .input-section input:focus {
+            border-color: #00a8ff;
+            box-shadow: 0 0 5px rgba(0, 168, 255, 0.3);
         }
 
         .input-section button {
@@ -56,6 +69,8 @@
             border-radius: 8px;
             font-size: 19.2px;
             cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
             box-shadow: 0 6px 15px rgba(0, 168, 255, 0.1);
         }
 
@@ -85,27 +100,30 @@
         }
 
         .patient-list li {
+            background-color: #ffffff;
             padding: 18px;
             margin-bottom: 20px;
             border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #ddd; /* Thin border instead of background */
         }
 
-        .patient-list li:last-child {
-            border-bottom: none; /* Remove bottom border from last item */
+        .patient-list li.rdv {
+            background-color: #d4edda;
+            border-left: 4px solid #27ae60;
         }
 
-        .patient-details {
+        .patient-list .patient-details {
             font-size: 21.6px;
             font-weight: 600;
             color: #333;
             flex: 1;
+            text-align: left;
         }
 
-        .patient-time, .visit-type {
+        .patient-list .patient-time, .patient-list .visit-type {
             font-size: 19.2px;
             color: #2980b9;
             font-weight: 600;
@@ -120,8 +138,6 @@
             border-radius: 12px;
             cursor: pointer;
             font-size: 17px;
-            display: flex;
-            align-items: center;
             transition: background-color 0.3s ease;
         }
 
@@ -173,9 +189,7 @@
     </div>
 
     <div class="patient-list">
-        <ul id="patientList">
-            <!-- No dummy data, dynamic content will be here -->
-        </ul>
+        <ul id="patientList"></ul>
     </div>
 </div>
 
