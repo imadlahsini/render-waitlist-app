@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,9 +21,9 @@
             width: 100%;
             max-width: 900px;
             background-color: white;
-            border-radius: 12px;
+            border-radius: 15px;
             padding: 40px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
@@ -70,7 +70,6 @@
             font-size: 19.2px;
             cursor: pointer;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            text-align: center;
             box-shadow: 0 6px 15px rgba(0, 168, 255, 0.1);
         }
 
@@ -100,49 +99,60 @@
         }
 
         .patient-list li {
-            background-color: #ffffff;
-            padding: 18px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .patient-list li.rdv {
-            background-color: #d4edda;
-            border-left: 4px solid #27ae60;
+        .patient-list li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
-        .patient-list .patient-details {
-            font-size: 21.6px;
-            font-weight: 600;
-            color: #333;
-            flex: 1;
-            text-align: left;
+        .patient-details {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
         }
 
-        .patient-list .patient-time, .patient-list .visit-type {
-            font-size: 19.2px;
+        .patient-time, .visit-type {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .patient-time::before {
+            content: '⏰'; /* Properly using icons as text characters */
+            margin-right: 8px;
+            font-size: 18px;
             color: #2980b9;
-            font-weight: 600;
-            margin-right: 15px;
         }
 
-        .patient-list button {
-            background-color: #28a745;
+        .visit-type::before {
+            content: '📅'; /* Properly using icons as text characters */
+            margin-right: 8px;
+            font-size: 18px;
+            color: #27ae60;
+        }
+
+        .action-button {
+            background-color: #00a8ff;
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 17px;
             transition: background-color 0.3s ease;
         }
 
-        .patient-list button:hover {
-            background-color: #218838;
+        .action-button:hover {
+            background-color: #0097e6;
         }
     </style>
 </head>
@@ -172,6 +182,7 @@
                 <option value="18">18</option>
                 <option value="19">19</option>
             </select>
+
             <select id="minutePicker">
                 <option value="00">00</option>
                 <option value="15">15</option>
@@ -228,15 +239,14 @@
         if (patients) {
             patients.sort((a, b) => a.time.localeCompare(b.time));
 
-            patients.forEach((patient, index) => {
+            patients.forEach((patient) => {
                 const li = document.createElement('li');
-                li.className = patient.type === 'RDV' ? 'rdv' : '';
 
                 li.innerHTML = `
-                    <span class="patient-details">${index + 1}. ${patient.name}</span>
+                    <span class="patient-details">${patient.name}</span>
                     <span class="patient-time">${patient.time}</span>
                     <span class="visit-type">${patient.type}</span>
-                    <button onclick="removePatient(${patient.id})">Servi</button>
+                    <button class="action-button" onclick="removePatient(${patient.id})">Served</button>
                 `;
                 list.appendChild(li);
 
@@ -270,7 +280,6 @@
             });
 
             displayPatients();
-            filterMinutes();
             document.getElementById('patientName').value = '';
         } catch (error) {
             showError('Error adding patient: ' + error.message);
@@ -280,58 +289,16 @@
 
     async function removePatient(id) {
         try {
-            await fetch(`/api/waitlist/${id}`, {
-                method: 'DELETE'
-            });
+            await fetch(`/api/waitlist/${id}`, { method: 'DELETE' });
             displayPatients();
-            filterMinutes();
         } catch (error) {
             showError('Error removing patient: ' + error.message);
             console.error(error);
         }
     }
 
-    function filterMinutes() {
-        const hour = document.getElementById('hourPicker').value;
-        const minuteSelect = document.getElementById('minutePicker');
-        const currentMinutes = minuteSelect.value;
-
-        minuteSelect.innerHTML = `
-            <option value="00">00</option>
-            <option value="15">15</option>
-            <option value="30">30</option>
-            <option value="45">45</option>
-        `;
-
-        takenSlots.forEach(time => {
-            const [takenHour, takenMinute] = time.split(':');
-            if (takenHour === hour) {
-                const optionToDisable = minuteSelect.querySelector(`option[value="${takenMinute}"]`);
-                if (optionToDisable) optionToDisable.disabled = true;
-            }
-        });
-
-        if (!minuteSelect.querySelector(`option[value="${currentMinutes}"]:not([disabled])`)) {
-            minuteSelect.value = '00';
-        }
-    }
-
-    function resetWaitlist() {
-        const now = new Date();
-        const nextMidnight = new Date(now);
-        nextMidnight.setHours(24, 0, 0, 0);
-        const timeout = nextMidnight.getTime() - now.getTime();
-        setTimeout(async () => {
-            await fetch('/api/reset', { method: 'POST' });
-            displayPatients();
-            resetWaitlist();
-        }, timeout);
-    }
-
     window.onload = function() {
         displayPatients();
-        filterMinutes();
-        resetWaitlist();
     };
 </script>
 
