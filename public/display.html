@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste d'attente des clients</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 50px;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h2 {
+            font-size: 42px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .customer-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .customer-list li {
+            background-color: white;
+            padding: 26px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid transparent;
+        }
+        .customer-list li.rdv {
+            background-color: #eafbea;
+            border-left-color: #28a745;
+        }
+        .customer-details {
+            font-size: 26px;
+            font-weight: 600;
+            color: #333;
+        }
+        .customer-type {
+            margin-left: 10px;
+            font-size: 24px;
+            color: #555;
+        }
+        .customer-time {
+            font-size: 26px;
+            color: #0071e3;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        .customer-time svg {
+            margin-right: 5px;
+            width: 29px;
+            height: 29px;
+            fill: #0071e3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>Liste d'attente des clients</h2>
+    </div>
+
+    <div class="customer-list">
+        <ul id="customerList"></ul>
+    </div>
+</div>
+
+<script>
+    // Function to display customers from localStorage
+    function displayCustomers() {
+        const customers = JSON.parse(localStorage.getItem('waitlist')) || [];
+        const list = document.getElementById('customerList');
+        list.innerHTML = ''; // Clear previous list
+
+        customers.forEach((customer, index) => {
+            const customerClass = customer.type === 'RDV' ? 'rdv' : '';
+            const li = document.createElement('li');
+            li.className = customerClass;
+
+            li.innerHTML = `<span class="customer-details">${index + 1}. ${customer.name}
+                                <span class="customer-type">(${customer.type})</span></span>
+                            <span class="customer-time">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                    <path fill="#0071e3" d="M12 0c6.627 0 12 5.373 12 12s-5.373 12-12 12-12-5.373-12-12 5.373-12 12-12zm-.5 6h1v6.792l3.437 3.438-.707.707-3.73-3.731v-7.206z"/>
+                                </svg>
+                                ${customer.time}
+                            </span>`;
+            list.appendChild(li); // Append the customer to the list
+        });
+    }
+
+    // Listen for changes in localStorage made by the dashboard and update automatically
+    window.addEventListener('storage', function(event) {
+        if (event.key === 'waitlist') { // If the waitlist is updated
+            displayCustomers(); // Update the display
+        }
+    });
+
+    window.onload = function() {
+        displayCustomers(); // Load customer list on page load
+    };
+</script>
+
+</body>
+</html>
