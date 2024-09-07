@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
-    <title>Tableau d'attente des patients</title>
+    <title>Patients Dashboard</title>
     <style>
-        /* Base Styles for the layout */
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f5f6fa;
+            background-color: #f8f9fa;
             margin: 0;
             padding: 0;
             display: flex;
@@ -28,8 +27,32 @@
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
         }
 
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        nav h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2f3640;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav ul li {
+            cursor: pointer;
+            color: #00a8ff;
+        }
+
         h2 {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
             text-align: center;
             color: #2f3640;
@@ -155,6 +178,14 @@
     </style>
 </head>
 <body>
+
+<nav>
+    <h1>Patients Dashboard</h1>
+    <ul>
+        <li>Patients</li>
+        <li>Settings</li>
+    </ul>
+</nav>
 
 <div class="error-popup" id="errorPopup">Erreur: Veuillez vérifier vos entrées.</div>
 
