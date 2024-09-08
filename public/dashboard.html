@@ -107,12 +107,17 @@
             margin-bottom: 20px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
         }
 
-        .patient-list li:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        .patient-list li.rdv {
+            background-color: #d4edda; /* Light green for RDV */
+            border-left: 4px solid #27ae60;
+        }
+
+        .patient-list li.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
         }
 
         .patient-details {
@@ -154,6 +159,12 @@
         .action-button:hover {
             background-color: #0097e6;
         }
+
+        .action-button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
     </style>
 </head>
 <body>
@@ -239,14 +250,15 @@
         if (patients) {
             patients.sort((a, b) => a.time.localeCompare(b.time));
 
-            patients.forEach((patient) => {
+            patients.forEach((patient, index) => {
                 const li = document.createElement('li');
+                li.className = patient.type === 'RDV' ? 'rdv' : ''; // Apply 'rdv' class if it's an RDV
 
                 li.innerHTML = `
-                    <span class="patient-details">${patient.name}</span>
+                    <span class="patient-details">${index + 1}. ${patient.name}</span>
                     <span class="patient-time">${patient.time}</span>
                     <span class="visit-type">${patient.type}</span>
-                    <button class="action-button" onclick="removePatient(${patient.id})">Served</button>
+                    <button class="action-button" onclick="removePatient(${patient.id}, this)">Served</button>
                 `;
                 list.appendChild(li);
 
@@ -287,13 +299,42 @@
         }
     }
 
-    async function removePatient(id) {
-        try {
-            await fetch(`/api/waitlist/${id}`, { method: 'DELETE' });
-            displayPatients();
-        } catch (error) {
-            showError('Error removing patient: ' + error.message);
-            console.error(error);
+    async function removePatient(id, button) {
+        const li = button.closest('li');
+        li.classList.add('fade-out'); // Add the fade-out animation
+        setTimeout(async () => {
+            try {
+                await fetch(`/api/waitlist/${id}`, { method: 'DELETE' });
+                displayPatients();
+            } catch (error) {
+                showError('Error removing patient: ' + error.message);
+                console.error(error);
+            }
+        }, 300); // Delay to match the fade-out animation
+    }
+
+    function filterMinutes() {
+        const hour = document.getElementById('hourPicker').value;
+        const minuteSelect = document.getElementById('minutePicker');
+        const currentMinutes = minuteSelect.value;
+
+        minuteSelect.innerHTML = `
+            <option value="00">00</option>
+            <option value="15">15</option>
+            <option value="30">30</option>
+            <option value="45">45</option>
+        `;
+
+        takenSlots.forEach(time => {
+            const [takenHour, takenMinute] = time.split(':');
+            if (takenHour === hour) {
+                const optionToDisable = minuteSelect.querySelector(`option[value="${takenMinute}"]`);
+                if (optionToDisable) optionToDisable.disabled = true;
+            }
+        });
+
+        if (!minuteSelect.querySelector(`option[value="${currentMinutes}"]:not([disabled])`)) {
+            minuteSelect.value = '00';
         }
     }
 
