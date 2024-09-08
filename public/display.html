@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f5f6fa; /* Set background color to F5F6FA */
+            background-color: #f5f6fa;
             margin: 0;
             padding: 50px;
         }
@@ -19,47 +19,13 @@
 
         .customer-list li {
             background-color: white;
-            padding: 26px; /* Increased padding */
+            padding: 26px;
             margin-bottom: 26px;
             border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); /* Reduced shadow */
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-left: 4px solid transparent;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .customer-list li:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Reduced hover shadow */
-        }
-
-        .customer-list li.rdv {
-            background-color: #eafbea; /* Light green for RDV */
-            border-left-color: #28a745;
-        }
-
-        .customer-details {
-            font-size: 23.4px; /* 30% bigger */
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .customer-type {
-            margin-left: 10px;
-            font-size: 20.8px; /* 30% bigger */
-            color: #555;
-        }
-
-        .customer-type[data-icon="Walkin"]::before {
-            content: '🚶'; /* Walking icon for Walk-in */
-            margin-right: 8px;
-        }
-
-        .customer-type[data-icon="RDV"]::before {
-            content: '📅'; /* Calendar icon for RDV */
-            margin-right: 8px;
         }
     </style>
 </head>
@@ -70,34 +36,27 @@
 </div>
 
 <script>
-    // Function to display customers from localStorage
     function displayCustomers() {
         const customers = JSON.parse(localStorage.getItem('waitlist')) || [];
         const list = document.getElementById('customerList');
-        list.innerHTML = ''; // Clear previous list
+        list.innerHTML = '';
 
         customers.forEach((customer, index) => {
-            const customerClass = customer.type === 'RDV' ? 'rdv' : '';
             const li = document.createElement('li');
-            li.className = customerClass;
-
             li.innerHTML = `
-                <span class="customer-details">${index + 1}. ${customer.name}</span>
-                <span class="customer-type" data-icon="${customer.type}">${customer.type}</span>
+                <span>${index + 1}. ${customer.name}</span>
+                <span>${customer.type}</span>
             `;
-            list.appendChild(li); // Append the customer to the list
+            list.appendChild(li);
         });
     }
 
-    // Listen for changes in localStorage made by the dashboard and update automatically
-    window.addEventListener('storage', function(event) {
-        if (event.key === 'waitlist') { // If the waitlist is updated
-            displayCustomers(); // Update the display
-        }
+    window.addEventListener('storage', function() {
+        displayCustomers();
     });
 
     window.onload = function() {
-        displayCustomers(); // Load customer list on page load
+        displayCustomers();
     };
 </script>
 

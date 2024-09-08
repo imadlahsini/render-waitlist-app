@@ -56,11 +56,6 @@
             box-sizing: border-box;
         }
 
-        .input-section select:focus, .input-section input:focus {
-            border-color: #00a8ff;
-            box-shadow: 0 0 5px rgba(0, 168, 255, 0.3);
-        }
-
         .input-section button {
             background-color: #00a8ff;
             color: white;
@@ -69,32 +64,9 @@
             border-radius: 8px;
             font-size: 19.2px;
             cursor: pointer;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 6px 15px rgba(0, 168, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-        }
-
-        .input-section button:hover {
-            background-color: #0097e6;
-            box-shadow: 0 8px 20px rgba(0, 151, 230, 0.3);
-        }
-
-        .error-popup {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #e74c3c;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 19.2px;
-            z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .patient-list ul {
@@ -111,67 +83,10 @@
             margin-bottom: 20px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
-        }
-
-        .patient-list li.rdv {
-            background-color: #d4edda;
-            border-left: 4px solid #27ae60;
-        }
-
-        .patient-list li.fade-out {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-
-        .patient-details {
-            font-size: 18px;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .patient-time, .visit-type {
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-        }
-
-        .patient-time::before {
-            content: '⏰'; 
-            margin-right: 8px;
-            font-size: 18px;
-            color: #2980b9;
-        }
-
-        .visit-type::before {
-            content: attr(data-icon); 
-            margin-right: 8px;
-            font-size: 18px;
-        }
-
-        .action-button {
-            background-color: #00a8ff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .action-button:hover {
-            background-color: #0097e6;
-        }
-
-        .action-button:disabled {
-            background-color: #ddd;
-            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-
-<div class="error-popup" id="errorPopup"></div>
 
 <div class="container">
     <h2>Tableau d'attente des patients</h2>
@@ -204,14 +119,12 @@
             </select>
 
             <select id="visitType">
-                <option value="Walkin" data-icon="🚶">Walk-in</option>
-                <option value="RDV" data-icon="📅">RDV</option>
+                <option value="Walkin">Walk-in</option>
+                <option value="RDV">RDV</option>
             </select>
         </div>
 
-        <button onclick="addPatient()">
-            👤 Ajouter un patient
-        </button>
+        <button onclick="addPatient()">Ajouter un patient</button>
     </div>
 
     <div class="patient-list">
@@ -221,58 +134,8 @@
 
 <script>
     let takenSlots = [];
-    let errorTimeout;
 
-    function showError(message) {
-        const errorPopup = document.getElementById('errorPopup');
-        errorPopup.textContent = message;
-        errorPopup.style.display = 'block';
-
-        clearTimeout(errorTimeout);
-        errorTimeout = setTimeout(() => errorPopup.style.display = 'none', 5000);
-    }
-
-    async function fetchPatients() {
-        try {
-            const response = await fetch('/api/waitlist');
-            if (!response.ok) throw new Error('Failed to fetch patients: ' + response.statusText);
-            const patients = await response.json();
-            return patients;
-        } catch (error) {
-            showError(error.message);
-            console.error(error);
-        }
-    }
-
-    async function displayPatients() {
-        const patients = await fetchPatients();
-        const list = document.getElementById('patientList');
-        list.innerHTML = '';
-
-        takenSlots = [];
-
-        if (patients) {
-            patients.sort((a, b) => a.time.localeCompare(b.time));
-
-            patients.forEach((patient, index) => {
-                const li = document.createElement('li');
-                li.className = patient.type === 'RDV' ? 'rdv' : ''; // Apply 'rdv' class if it's an RDV
-
-                li.innerHTML = `
-                    <span class="patient-details">${index + 1}. ${patient.name}</span>
-                    <span class="patient-time">${patient.time}</span>
-                    <span class="visit-type" data-icon="${patient.type === 'Walkin' ? '🚶' : '📅'}">${patient.type}</span>
-                    <button class="action-button" onclick="removePatient(${patient.id}, this)">Served</button>
-                `;
-                list.appendChild(li);
-
-                takenSlots.push(patient.time);
-            });
-            filterMinutes();
-        }
-    }
-
-    async function addPatient() {
+    function addPatient() {
         const patientName = document.getElementById('patientName').value.trim();
         const selectedHour = document.getElementById('hourPicker').value;
         const selectedMinute = document.getElementById('minutePicker').value;
@@ -280,68 +143,35 @@
         const visitType = document.getElementById('visitType').value;
 
         if (patientName === '' || takenSlots.includes(patientTime)) {
-            showError('Ce créneau est déjà pris ou le nom du patient est vide.');
+            alert('This time slot is already taken or the patient name is empty.');
             return;
         }
 
         const patient = { name: patientName, time: patientTime, type: visitType };
+        const currentList = JSON.parse(localStorage.getItem('waitlist')) || [];
+        currentList.push(patient);
 
-        try {
-            const currentList = JSON.parse(localStorage.getItem('waitlist')) || [];
-            currentList.push(patient);
+        localStorage.setItem('waitlist', JSON.stringify(currentList));
 
-            // Update localStorage with the new patient
-            localStorage.setItem('waitlist', JSON.stringify(currentList));
-
-            // Trigger a custom event to force display update
-            window.dispatchEvent(new Event('storage'));
-
-            displayPatients(); // Refresh the dashboard list
-
-            document.getElementById('patientName').value = '';
-        } catch (error) {
-            showError('Error adding patient: ' + error.message);
-            console.error(error);
-        }
+        window.dispatchEvent(new Event('storage'));
+        displayPatients();
+        document.getElementById('patientName').value = '';
     }
 
-    async function removePatient(id, button) {
-        const li = button.closest('li');
-        li.classList.add('fade-out'); // Add the fade-out animation
-        setTimeout(async () => {
-            try {
-                await fetch(`/api/waitlist/${id}`, { method: 'DELETE' });
-                displayPatients();
-            } catch (error) {
-                showError('Error removing patient: ' + error.message);
-                console.error(error);
-            }
-        }, 300); // Delay to match the fade-out animation
-    }
+    function displayPatients() {
+        const patients = JSON.parse(localStorage.getItem('waitlist')) || [];
+        const list = document.getElementById('patientList');
+        list.innerHTML = '';
 
-    function filterMinutes() {
-        const hour = document.getElementById('hourPicker').value;
-        const minuteSelect = document.getElementById('minutePicker');
-        const currentMinutes = minuteSelect.value;
-
-        minuteSelect.innerHTML = `
-            <option value="00">00</option>
-            <option value="15">15</option>
-            <option value="30">30</option>
-            <option value="45">45</option>
-        `;
-
-        takenSlots.forEach(time => {
-            const [takenHour, takenMinute] = time.split(':');
-            if (takenHour === hour) {
-                const optionToDisable = minuteSelect.querySelector(`option[value="${takenMinute}"]`);
-                if (optionToDisable) optionToDisable.disabled = true;
-            }
+        patients.forEach((patient, index) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${index + 1}. ${patient.name}</span>
+                <span>${patient.time}</span>
+                <span>${patient.type}</span>
+            `;
+            list.appendChild(li);
         });
-
-        if (!minuteSelect.querySelector(`option[value="${currentMinutes}"]:not([disabled])`)) {
-            minuteSelect.value = '00';
-        }
     }
 
     window.onload = function() {
