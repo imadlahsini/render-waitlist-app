@@ -85,12 +85,54 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .customer-list li.rdv {
+            background-color: #eafbea;
         }
 
         .customer-time::before {
             content: '⏰';
             margin-right: 8px;
             color: #0071e3;
+        }
+
+        .customer-name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .action-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .action-button:hover {
+            background-color: #218838;
+            box-shadow: 0 8px 20px rgba(0, 168, 255, 0.3);
+        }
+
+        .action-button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
         }
     </style>
 </head>
@@ -103,7 +145,7 @@
 
     <div class="input-section">
         <input type="text" id="patientName" placeholder="Entrez le nom du patient">
-        
+
         <div class="time-visit-wrapper">
             <select id="hourPicker">
                 <option value="07">07</option>
@@ -164,13 +206,32 @@
 
         patients.forEach((patient, index) => {
             const li = document.createElement('li');
+            li.className = patient.type === 'RDV' ? 'rdv' : '';
+
             li.innerHTML = `
-                <span>${index + 1}. ${patient.name}</span>
+                <span class="customer-name">${index + 1}. ${patient.name}</span>
                 <span class="customer-time">${patient.time}</span>
-                <span class="visit-type">${patient.type}</span>
+                <span class="visit-type">${patient.type === 'Walkin' ? '🚶' : '📆'}</span>
+                <button class="action-button" onclick="removePatient(${index}, this)">
+                    <span class="icon">✔️</span> Servi
+                </button>
             `;
             list.appendChild(li);
         });
+    }
+
+    function removePatient(index, button) {
+        const currentList = JSON.parse(localStorage.getItem('waitlist')) || [];
+        currentList.splice(index, 1);
+        localStorage.setItem('waitlist', JSON.stringify(currentList));
+
+        const li = button.closest('li');
+        li.classList.add('fade-out');
+
+        setTimeout(() => {
+            li.remove();
+            displayPatients();
+        }, 300); // Delay to match the fade-out animation
     }
 
     window.onload = function() {
