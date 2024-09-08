@@ -5,7 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patients Dashboard</title>
     <style>
-        /* Same styling as before */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 33.6px;
+            font-weight: 700;
+            text-align: center;
+            color: #2f3640;
+            margin-bottom: 40px;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .time-visit-wrapper {
+            display: flex;
+            gap: 15px;
+        }
+
+        .input-section input, .input-section select {
+            padding: 14.4px;
+            font-size: 19.2px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .input-section select:focus, .input-section input:focus {
+            border-color: #00a8ff;
+            box-shadow: 0 0 5px rgba(0, 168, 255, 0.3);
+        }
+
+        .input-section button {
+            background-color: #00a8ff;
+            color: white;
+            border: none;
+            padding: 16.8px 28.8px;
+            border-radius: 8px;
+            font-size: 19.2px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0, 168, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .input-section button:hover {
+            background-color: #0097e6;
+            box-shadow: 0 8px 20px rgba(0, 151, 230, 0.3);
+        }
+
+        .error-popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 19.2px;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .patient-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .patient-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #fff;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+        }
+
+        .patient-list li.rdv {
+            background-color: #d4edda;
+            border-left: 4px solid #27ae60;
+        }
+
+        .patient-list li.fade-out {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        .patient-details {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .patient-time, .visit-type {
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .patient-time::before {
+            content: '⏰'; 
+            margin-right: 8px;
+            font-size: 18px;
+            color: #2980b9;
+        }
+
+        .visit-type::before {
+            content: attr(data-icon); 
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .action-button {
+            background-color: #00a8ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .action-button:hover {
+            background-color: #0097e6;
+        }
+
+        .action-button:disabled {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -135,23 +296,12 @@
             // Trigger a custom event to force display update
             window.dispatchEvent(new Event('storage'));
 
-            // Refresh the dashboard list
-            displayPatients(); 
-            
-            // Notify the display page
-            updateDisplayPage();
+            displayPatients(); // Refresh the dashboard list
 
             document.getElementById('patientName').value = '';
         } catch (error) {
             showError('Error adding patient: ' + error.message);
             console.error(error);
-        }
-    }
-
-    function updateDisplayPage() {
-        // Custom function to refresh the display page, you need to ensure the display page is also listening for updates
-        if (window.opener) {
-            window.opener.postMessage('refreshDisplay', '*'); // Sends a message to the display page to refresh
         }
     }
 
@@ -162,7 +312,6 @@
             try {
                 await fetch(`/api/waitlist/${id}`, { method: 'DELETE' });
                 displayPatients();
-                updateDisplayPage(); // Also update the display page after deletion
             } catch (error) {
                 showError('Error removing patient: ' + error.message);
                 console.error(error);
@@ -197,12 +346,6 @@
 
     window.onload = function() {
         displayPatients();
-        // Listen for messages from the display page to refresh when needed
-        window.addEventListener('message', function(event) {
-            if (event.data === 'refreshDashboard') {
-                displayPatients(); // Refresh dashboard when display page requests it
-            }
-        });
     };
 </script>
 
