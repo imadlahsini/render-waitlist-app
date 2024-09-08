@@ -72,28 +72,29 @@
 </div>
 
 <script>
-    function displayCustomers() {
-        const customers = JSON.parse(localStorage.getItem('waitlist')) || [];
-        const list = document.getElementById('customerList');
-        list.innerHTML = '';
+    async function displayCustomers() {
+        try {
+            const response = await fetch('/api/waitlist');
+            const customers = await response.json();
+            const list = document.getElementById('customerList');
+            list.innerHTML = '';
 
-        customers.forEach((customer, index) => {
-            const customerClass = customer.type === 'RDV' ? 'rdv' : '';
-            const li = document.createElement('li');
-            li.className = customerClass;
+            customers.forEach((customer, index) => {
+                const customerClass = customer.type === 'RDV' ? 'rdv' : '';
+                const li = document.createElement('li');
+                li.className = customerClass;
 
-            li.innerHTML = `
-                <span class="customer-name">${index + 1}. ${customer.name}</span>
-                <span class="customer-time">${customer.time}</span>
-                <span class="customer-type" data-icon="${customer.type}">${customer.type}</span>
-            `;
-            list.appendChild(li);
-        });
+                li.innerHTML = `
+                    <span class="customer-name">${index + 1}. ${customer.name}</span>
+                    <span class="customer-time">${customer.time}</span>
+                    <span class="customer-type" data-icon="${customer.type}">${customer.type}</span>
+                `;
+                list.appendChild(li);
+            });
+        } catch (error) {
+            console.error('Error fetching customers:', error);
+        }
     }
-
-    window.addEventListener('storage', function() {
-        displayCustomers();
-    });
 
     window.onload = function() {
         displayCustomers();

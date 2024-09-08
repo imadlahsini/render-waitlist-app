@@ -175,7 +175,7 @@
 </div>
 
 <script>
-    function addPatient() {
+    async function addPatient() {
         const patientName = document.getElementById('patientName').value.trim();
         const selectedHour = document.getElementById('hourPicker').value;
         const selectedMinute = document.getElementById('minutePicker').value;
@@ -189,49 +189,64 @@
 
         const patient = { name: patientName, time: patientTime, type: visitType };
 
-        const currentList = JSON.parse(localStorage.getItem('waitlist')) || [];
-        currentList.push(patient);
+        try {
+            await fetch('/api/waitlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(patient)
+            });
+            displayPatients();
+        } catch (error) {
+            console.error('Error adding patient:', error);
+        }
 
-        localStorage.setItem('waitlist', JSON.stringify(currentList));
-
-        window.dispatchEvent(new Event('storage'));
-        displayPatients();
         document.getElementById('patientName').value = '';
     }
 
-    function displayPatients() {
-        const patients = JSON.parse(localStorage.getItem('waitlist')) || [];
-        const list = document.getElementById('patientList');
-        list.innerHTML = '';
+    async function displayPatients() {
+        try {
+            const response = await fetch('/api/waitlist');
+            const patients = await response.json();
+            const list = document.getElementById('patientList');
+            list.innerHTML = '';
 
-        patients.forEach((patient, index) => {
-            const li = document.createElement('li');
-            li.className = patient.type === 'RDV' ? 'rdv' : '';
+            patients.forEach((patient, index) => {
+                const li = document.createElement('li');
+                li.className = patient.type === 'RDV' ? 'rdv' : '';
 
-            li.innerHTML = `
-                <span class="customer-name">${index + 1}. ${patient.name}</span>
-                <span class="customer-time">${patient.time}</span>
-                <span class="visit-type">${patient.type === 'Walkin' ? '🚶' : '📆'}</span>
-                <button class="action-button" onclick="removePatient(${index}, this)">
-                    <span class="icon">✔️</span> Servi
-                </button>
-            `;
-            list.appendChild(li);
-        });
+                li.innerHTML = `
+                    <span class="customer-name">${index + 1}. ${patient.name}</span>
+                    <span class="customer-time">${patient.time}</span>
+                    <span class="visit-type">${patient.type === 'Walkin' ? '🚶' : '📆'}</span>
+                    <button class="action-button" onclick="removePatient(${patient.id}, this)">
+                        <span class="icon">✔️</span> Servi
+                    </button>
+                `;
+                list.appendChild(li);
+            });
+        } catch (error) {
+            console.error('Error fetching patients:', error);
+        }
     }
 
-    function removePatient(index, button) {
-        const currentList = JSON.parse(localStorage.getItem('waitlist')) || [];
-        currentList.splice(index, 1);
-        localStorage.setItem('waitlist', JSON.stringify(currentList));
+    async function removePatient(id, button) {
+        try {
+            await fetch(`/api/waitlist/${id}`, {
+                method: 'DELETE'
+            });
 
-        const li = button.closest('li');
-        li.classList.add('fade-out');
+            const li = button.closest('li');
+            li.classList.add('fade-out');
 
-        setTimeout(() => {
-            li.remove();
-            displayPatients();
-        }, 300); // Delay to match the fade-out animation
+            setTimeout(() => {
+                li.remove();
+                displayPatients();
+            }, 300); // Delay to match the fade-out animation
+        } catch (error) {
+            console.error('Error removing patient:', error);
+        }
     }
 
     window.onload = function() {
