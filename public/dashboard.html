@@ -282,33 +282,22 @@
 
         for (let hour of hourPicker.options) {
             for (let minute of minutePicker.options) {
-                fullTimeList.push(`${hour.value}:${minute.value}`);
+                const time = `${hour.value}:${minute.value}`;
+                const timeOption = `${hour.value}:${minute.value}`;
+
+                if (selectedTimes.includes(timeOption)) {
+                    hour.disabled = true;
+                    minute.disabled = true;
+                    hour.classList.add('disabled-option');
+                    minute.classList.add('disabled-option');
+                } else {
+                    hour.disabled = false;
+                    minute.disabled = false;
+                    hour.classList.remove('disabled-option');
+                    minute.classList.remove('disabled-option');
+                }
             }
         }
-
-        fullTimeList.forEach(time => {
-            const hour = time.split(":")[0];
-            const minute = time.split(":")[1];
-
-            const hourOption = [...hourPicker.options].find(option => option.value === hour);
-            const minuteOption = [...minutePicker.options].find(option => option.value === minute);
-
-            if (selectedTimes.includes(time)) {
-                if (hourOption && minuteOption) {
-                    hourOption.classList.add('disabled-option');
-                    minuteOption.classList.add('disabled-option');
-                    hourOption.disabled = true;
-                    minuteOption.disabled = true;
-                }
-            } else {
-                if (hourOption && minuteOption) {
-                    hourOption.classList.remove('disabled-option');
-                    minuteOption.classList.remove('disabled-option');
-                    hourOption.disabled = false;
-                    minuteOption.disabled = false;
-                }
-            }
-        });
     }
 
     async function removePatient(id, button) {
