@@ -74,7 +74,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px; /* Add space between the icon and text */
+            gap: 10px;
         }
 
         .input-section button:hover {
@@ -115,7 +115,7 @@
         }
 
         .patient-list li.rdv {
-            background-color: #d4edda; /* Light green for RDV */
+            background-color: #d4edda;
             border-left: 4px solid #27ae60;
         }
 
@@ -137,14 +137,14 @@
         }
 
         .patient-time::before {
-            content: '⏰'; /* Properly using icons as text characters */
+            content: '⏰'; 
             margin-right: 8px;
             font-size: 18px;
             color: #2980b9;
         }
 
         .visit-type::before {
-            content: attr(data-icon); /* Use data attribute for dynamic icon */
+            content: attr(data-icon); 
             margin-right: 8px;
             font-size: 18px;
         }
@@ -210,7 +210,6 @@
             </select>
         </div>
 
-        <!-- Add Plus or User Icon next to the button text -->
         <button onclick="addPatient()">
             👤 Ajouter un patient
         </button>
