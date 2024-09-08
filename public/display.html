@@ -72,6 +72,7 @@
 </div>
 
 <script>
+    // Function to fetch and display customers
     async function displayCustomers() {
         try {
             const response = await fetch('/api/waitlist');
@@ -96,6 +97,10 @@
         }
     }
 
+    // Fetch customers every 5 seconds
+    setInterval(displayCustomers, 5000);
+
+    // Initial load
     window.onload = function() {
         displayCustomers();
     };
