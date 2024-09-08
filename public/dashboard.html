@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #ffffff; /* Changed background color to white */
+            background-color: #ffffff;
             margin: 0;
             padding: 0;
             display: flex;
@@ -289,15 +289,16 @@
         const patient = { name: patientName, time: patientTime, type: visitType };
 
         try {
-            await fetch('/api/waitlist', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(patient)
-            });
+            const currentList = JSON.parse(localStorage.getItem('waitlist')) || [];
+            currentList.push(patient);
 
-            displayPatients();
+            // Update localStorage with the new patient
+            localStorage.setItem('waitlist', JSON.stringify(currentList));
+
+            // Trigger a custom event to force display update
+            window.dispatchEvent(new Event('storage'));
+
+            displayPatients(); // Refresh the dashboard list
             document.getElementById('patientName').value = '';
         } catch (error) {
             showError('Error adding patient: ' + error.message);
