@@ -5,7 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Liste d'attente</title>
     <style>
-        /* Add your CSS styling here */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 50px;
+        }
+
+        .customer-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .customer-list li {
+            background-color: white;
+            padding: 26px;
+            margin-bottom: 26px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
 <body>
@@ -18,7 +39,7 @@
     function displayCustomers() {
         const customers = JSON.parse(localStorage.getItem('waitlist')) || [];
         const list = document.getElementById('customerList');
-        list.innerHTML = ''; // Clear the list
+        list.innerHTML = '';
 
         customers.forEach((customer, index) => {
             const li = document.createElement('li');
@@ -31,11 +52,11 @@
     }
 
     window.addEventListener('storage', function() {
-        displayCustomers(); // Update when localStorage changes
+        displayCustomers();
     });
 
     window.onload = function() {
-        displayCustomers(); // Display customers on page load
+        displayCustomers();
     };
 </script>
 
