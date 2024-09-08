@@ -71,16 +71,32 @@
     <ul id="customerList"></ul>
 </div>
 
+<audio id="notificationSound">
+    <source src="bell-ding-1.wav" type="audio/wav">
+    Your browser does not support the audio element.
+</audio>
+
 <script>
+    let currentPatients = [];
+
     // Function to fetch and display customers
     async function displayCustomers() {
         try {
             const response = await fetch('/api/waitlist');
-            const customers = await response.json();
+            const patients = await response.json();
             const list = document.getElementById('customerList');
+            const notificationSound = document.getElementById('notificationSound');
+            
+            // Compare the number of patients to detect new entries
+            if (patients.length > currentPatients.length) {
+                notificationSound.play(); // Play sound if a new patient is added
+            }
+
+            currentPatients = patients; // Update the current patient list
+
             list.innerHTML = '';
 
-            customers.forEach((customer, index) => {
+            patients.forEach((customer, index) => {
                 const customerClass = customer.type === 'RDV' ? 'rdv' : '';
                 const li = document.createElement('li');
                 li.className = customerClass;
