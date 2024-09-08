@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f5f6fa;
+            background-color: #ffffff; /* Changed background color to white */
             margin: 0;
             padding: 0;
             display: flex;
@@ -71,6 +71,10 @@
             cursor: pointer;
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
             box-shadow: 0 6px 15px rgba(0, 168, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px; /* Add space between the icon and text */
         }
 
         .input-section button:hover {
@@ -140,10 +144,9 @@
         }
 
         .visit-type::before {
-            content: '📅'; /* Properly using icons as text characters */
+            content: attr(data-icon); /* Use data attribute for dynamic icon */
             margin-right: 8px;
             font-size: 18px;
-            color: #27ae60;
         }
 
         .action-button {
@@ -202,12 +205,15 @@
             </select>
 
             <select id="visitType">
-                <option value="Walkin">Walk-in</option>
-                <option value="RDV">RDV</option>
+                <option value="Walkin" data-icon="🚶">Walk-in</option>
+                <option value="RDV" data-icon="📅">RDV</option>
             </select>
         </div>
 
-        <button onclick="addPatient()">Ajouter un patient</button>
+        <!-- Add Plus or User Icon next to the button text -->
+        <button onclick="addPatient()">
+            👤 Ajouter un patient
+        </button>
     </div>
 
     <div class="patient-list">
@@ -257,7 +263,7 @@
                 li.innerHTML = `
                     <span class="patient-details">${index + 1}. ${patient.name}</span>
                     <span class="patient-time">${patient.time}</span>
-                    <span class="visit-type">${patient.type}</span>
+                    <span class="visit-type" data-icon="${patient.type === 'Walkin' ? '🚶' : '📅'}">${patient.type}</span>
                     <button class="action-button" onclick="removePatient(${patient.id}, this)">Served</button>
                 `;
                 list.appendChild(li);
