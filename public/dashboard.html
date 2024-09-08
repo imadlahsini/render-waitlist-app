@@ -58,6 +58,15 @@
             width: 100%;
         }
 
+        /* Adjust spacing for patientName input */
+        #patientName {
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
         .input-section button {
             background-color: #00a8ff;
             color: white;
@@ -73,6 +82,13 @@
 
         .plus-icon {
             margin-left: 8px;
+            color: white;
+        }
+
+        .disabled-option {
+            background-color: #e0e0e0;
+            color: #a0a0a0;
+            cursor: not-allowed;
         }
 
         .customer-list ul {
@@ -252,9 +268,47 @@
                 `;
                 list.appendChild(li);
             });
+
+            updateTimePickers(); // Update the time pickers to reflect selected times
         } catch (error) {
             console.error('Error fetching patients:', error);
         }
+    }
+
+    function updateTimePickers() {
+        const hourPicker = document.getElementById('hourPicker');
+        const minutePicker = document.getElementById('minutePicker');
+        const fullTimeList = [];
+
+        for (let hour of hourPicker.options) {
+            for (let minute of minutePicker.options) {
+                fullTimeList.push(`${hour.value}:${minute.value}`);
+            }
+        }
+
+        fullTimeList.forEach(time => {
+            const hour = time.split(":")[0];
+            const minute = time.split(":")[1];
+
+            const hourOption = [...hourPicker.options].find(option => option.value === hour);
+            const minuteOption = [...minutePicker.options].find(option => option.value === minute);
+
+            if (selectedTimes.includes(time)) {
+                if (hourOption && minuteOption) {
+                    hourOption.classList.add('disabled-option');
+                    minuteOption.classList.add('disabled-option');
+                    hourOption.disabled = true;
+                    minuteOption.disabled = true;
+                }
+            } else {
+                if (hourOption && minuteOption) {
+                    hourOption.classList.remove('disabled-option');
+                    minuteOption.classList.remove('disabled-option');
+                    hourOption.disabled = false;
+                    minuteOption.disabled = false;
+                }
+            }
+        });
     }
 
     async function removePatient(id, button) {
