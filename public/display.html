@@ -26,6 +26,42 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .customer-list li.rdv {
+            background-color: #eafbea;
+        }
+
+        .customer-list li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .customer-name {
+            font-size: 23.4px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .customer-time::before {
+            content: '⏰';
+            margin-right: 8px;
+            color: #0071e3;
+        }
+
+        .customer-type {
+            font-size: 20.8px;
+        }
+
+        .customer-type[data-icon="Walkin"]::before {
+            content: '🚶';
+            margin-right: 8px;
+        }
+
+        .customer-type[data-icon="RDV"]::before {
+            content: '📆';
+            margin-right: 8px;
         }
     </style>
 </head>
@@ -42,10 +78,14 @@
         list.innerHTML = '';
 
         customers.forEach((customer, index) => {
+            const customerClass = customer.type === 'RDV' ? 'rdv' : '';
             const li = document.createElement('li');
+            li.className = customerClass;
+
             li.innerHTML = `
-                <span>${index + 1}. ${customer.name}</span>
-                <span>${customer.type}</span>
+                <span class="customer-name">${index + 1}. ${customer.name}</span>
+                <span class="customer-time">${customer.time}</span>
+                <span class="customer-type" data-icon="${customer.type}">${customer.type}</span>
             `;
             list.appendChild(li);
         });
