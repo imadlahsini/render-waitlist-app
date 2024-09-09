@@ -202,7 +202,7 @@
             </div>
         </div>
 
-        <button>Ajouter un patient</button>
+        <button onclick="addPatient()">Ajouter un patient</button>
     </div>
 
     <div class="customer-list">
@@ -211,7 +211,42 @@
 </div>
 
 <script>
-    // Placeholder for JavaScript functions
+    function addPatient() {
+        var name = document.getElementById('patientName').value;
+        var hour = document.getElementById('hourPicker').value;
+        var minute = document.getElementById('minutePicker').value;
+        var visitType = document.getElementById('visitType').value;
+
+        if (name === "") {
+            alert("Please enter the patient's name.");
+            return;
+        }
+
+        var time = hour + ":" + minute;
+        var patientList = document.getElementById('patientList');
+        
+        var newPatient = document.createElement('li');
+        newPatient.className = 'patient-card';
+        newPatient.innerHTML = `
+            <span class="customer-name">${name}</span>
+            <span class="customer-time">${time}</span>
+            <span class="customer-type">${visitType}</span>
+            <button class="action-button" onclick="removePatient(this)">✔️ Servi</button>
+        `;
+
+        patientList.appendChild(newPatient);
+
+        // Clear input fields after adding
+        document.getElementById('patientName').value = "";
+        document.getElementById('hourPicker').value = "07";
+        document.getElementById('minutePicker').value = "00";
+        document.getElementById('visitType').value = "Walkin";
+    }
+
+    function removePatient(button) {
+        var patientCard = button.parentElement;
+        patientCard.remove();
+    }
 </script>
 
 </body>
