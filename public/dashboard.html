@@ -54,7 +54,7 @@
             width: 100%;
             padding: 14px 14px 14px 45px;
             font-size: 18px;
-            border-radius: 25px; /* Rounded borders for input fields */
+            border-radius: 25px;
             border: 1px solid #ddd;
             box-sizing: border-box;
         }
@@ -120,11 +120,19 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: all 0.4s ease; /* Smooth transition for removal */
         }
 
         .customer-name {
             font-size: 20px;
             font-weight: bold;
+        }
+
+        .customer-time,
+        .customer-type {
+            margin: 5px 0;
+            font-size: 16px;
         }
 
         .action-button {
@@ -135,10 +143,17 @@
             border-radius: 25px;
             cursor: pointer;
             font-size: 12px;
+            position: absolute;
+            right: 10px; /* Positioned to the far right */
         }
 
         .icon {
             margin-right: 8px;
+        }
+
+        /* Highlight RDV visit type in green */
+        .rdv-highlight {
+            background-color: #d4edda;
         }
 
         /* Responsive Design */
@@ -148,6 +163,11 @@
             }
         }
 
+        /* Grey out unavailable time slots */
+        select option.unavailable {
+            background-color: #ccc;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -225,12 +245,22 @@
         var time = hour + ":" + minute;
         var patientList = document.getElementById('patientList');
         
+        // Grey out selected time slot
+        document.querySelector(`#hourPicker option[value="${hour}"]`).classList.add('unavailable');
+        document.querySelector(`#minutePicker option[value="${minute}"]`).classList.add('unavailable');
+        
         var newPatient = document.createElement('li');
         newPatient.className = 'patient-card';
+        if (visitType === "RDV") {
+            newPatient.classList.add("rdv-highlight"); // Highlight RDV cards
+        }
+        
         newPatient.innerHTML = `
-            <span class="customer-name">${name}</span>
-            <span class="customer-time">${time}</span>
-            <span class="customer-type">${visitType}</span>
+            <div>
+                <span class="customer-name">${name}</span>
+                <div class="customer-time">Time: ${time}</div>
+                <div class="customer-type">${visitType}</div>
+            </div>
             <button class="action-button" onclick="removePatient(this)">✔️ Servi</button>
         `;
 
@@ -245,7 +275,10 @@
 
     function removePatient(button) {
         var patientCard = button.parentElement;
-        patientCard.remove();
+        patientCard.style.opacity = '0'; // Smooth fade out effect
+        setTimeout(() => {
+            patientCard.remove();
+        }, 400); // Delay removal for smooth transition
     }
 </script>
 
