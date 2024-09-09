@@ -25,7 +25,6 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
-        /* New styles for the modal button and modal pop-up */
         .open-modal-btn {
             background-color: #00a8ff;
             color: white;
@@ -36,6 +35,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 30px;
+            font-weight: bold;
+            width: 100%;
         }
 
         .open-modal-btn:hover {
@@ -112,6 +113,7 @@
             cursor: pointer;
             width: 100%;
             transition: all 0.3s ease;
+            font-weight: bold;
         }
 
         .submit-btn:hover {
@@ -170,22 +172,20 @@
 <body>
 
 <div class="container">
-    <!-- Add the modal button here -->
-    <button class="open-modal-btn" onclick="openModal()">Add Patient</button>
+    <button class="open-modal-btn" onclick="openModal()">Ajouter un patient</button>
 
     <div class="customer-list">
         <ul id="patientList"></ul>
     </div>
 </div>
 
-<!-- Modal for adding patient -->
 <div class="modal" id="modal">
     <div class="modal-content">
         <button class="close-btn" onclick="closeModal()">X</button>
-        <h2>Add New Patient</h2>
+        <h2>Ajouter un nouveau patient</h2>
         
         <div class="input-field">
-            <input type="text" id="patientName" placeholder="Enter Patient Name">
+            <input type="text" id="patientName" placeholder="Entrez le nom du patient">
         </div>
         
         <div class="input-field input-group">
@@ -206,12 +206,12 @@
             </select>
 
             <select id="visitType">
-                <option value="Walkin">🚶 Walk-in</option>
+                <option value="Walkin">🚶 Sans RDV</option>
                 <option value="RDV">📆 RDV</option>
             </select>
         </div>
 
-        <button class="submit-btn" onclick="addPatient()">Submit</button>
+        <button class="submit-btn" onclick="addPatient()">Soumettre</button>
     </div>
 </div>
 
@@ -239,14 +239,13 @@
         }
 
         if (selectedTimes.includes(patientTime)) {
-            alert('This time is already selected for another patient.');
+            alert('Ce créneau horaire est déjà réservé pour un autre patient.');
             return;
         }
 
         const patient = { name: patientName, time: patientTime, type: visitType };
 
         try {
-            // Send patient data to the server
             await fetch('/api/waitlist', {
                 method: 'POST',
                 headers: {
@@ -257,7 +256,7 @@
             selectedTimes.push(patientTime);
             displayPatients();
         } catch (error) {
-            console.error('Error adding patient:', error);
+            console.error('Erreur lors de l\'ajout du patient:', error);
         }
 
         document.getElementById('patientName').value = '';
@@ -269,7 +268,7 @@
             const response = await fetch('/api/waitlist');
             const patients = await response.json();
             const list = document.getElementById('patientList');
-            selectedTimes = []; // Reset the selected times
+            selectedTimes = [];
 
             list.innerHTML = '';
 
@@ -277,12 +276,12 @@
                 const li = document.createElement('li');
                 li.className = patient.type === 'RDV' ? 'rdv' : '';
 
-                selectedTimes.push(patient.time); // Add existing patient times to the selectedTimes list
+                selectedTimes.push(patient.time);
 
                 li.innerHTML = `
                     <span class="customer-name">${index + 1}. ${patient.name}</span>
                     <span class="customer-time">${patient.time}</span>
-                    <span class="visit-type">${patient.type === 'Walkin' ? '🚶 Walk-in' : '📆 RDV'}</span>
+                    <span class="visit-type">${patient.type === 'Walkin' ? '🚶 Sans RDV' : '📆 RDV'}</span>
                     <button class="action-button" onclick="removePatient(${patient.id}, this)">
                         <span class="icon">✔️</span> Servi
                     </button>
@@ -290,9 +289,9 @@
                 list.appendChild(li);
             });
 
-            updateTimePickers(); // Update the time pickers to reflect selected times
+            updateTimePickers();
         } catch (error) {
-            console.error('Error fetching patients:', error);
+            console.error('Erreur lors de la récupération des patients:', error);
         }
     }
 
@@ -304,10 +303,8 @@
             for (let minute of minutePicker.options) {
                 const time = `${hour.value}:${minute.value}`;
                 if (selectedTimes.includes(time)) {
-                    hour.disabled = true;
                     minute.disabled = true;
                 } else {
-                    hour.disabled = false;
                     minute.disabled = false;
                 }
             }
@@ -324,7 +321,7 @@
             li.remove();
             displayPatients();
         } catch (error) {
-            console.error('Error removing patient:', error);
+            console.error('Erreur lors de la suppression du patient:', error);
         }
     }
 
