@@ -8,23 +8,23 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f5f6fa;
+            background-color: #ffffff;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
+            padding: 50px;
         }
 
         .container {
+            width: 100%;
+            max-width: 900px;
             background-color: white;
-            border-radius: 25px; /* Rounded borders for the container */
+            border-radius: 15px;
             padding: 40px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 750px;
-            box-sizing: border-box;
         }
 
         .header {
@@ -36,6 +36,7 @@
             font-size: 36px;
             font-weight: 700;
             color: #333;
+            margin-bottom: 10px;
         }
 
         .input-section {
@@ -45,65 +46,30 @@
             margin-bottom: 30px;
         }
 
-        .input-wrapper {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .input-wrapper input, .input-wrapper select {
-            width: 100%;
-            padding: 14px 14px 14px 45px;
-            font-size: 18px;
-            border-radius: 25px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-        }
-
-        .input-wrapper input {
-            background-color: #f7f7f7; /* Background for name input */
-        }
-
-        .input-wrapper .icon {
-            position: absolute;
-            top: 50%;
-            left: 15px;
-            transform: translateY(-50%);
-            font-size: 20px;
-            color: #6a0dad;
-        }
-
         .time-visit-wrapper {
             display: flex;
             gap: 15px;
-            justify-content: center; /* Centered time/visit selectors */
         }
 
-        .time-visit-wrapper select {
+        .input-section input, .input-section select {
+            padding: 14px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
             width: 100%;
         }
 
-        button {
-            background-color: #6a0dad;
+        .input-section button {
+            background-color: #00a8ff;
             color: white;
             border: none;
             padding: 16px;
-            border-radius: 50px; /* Rounded buttons */
+            border-radius: 8px;
             font-size: 18px;
             cursor: pointer;
-            width: 100%;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        button:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Hover effect for button */
-        }
-
-        /* Hover effect for input fields */
-        input:hover, select:hover {
-            border-color: #6a0dad;
-            box-shadow: 0 0 5px rgba(106, 13, 173, 0.5);
-            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .customer-list ul {
@@ -112,16 +78,24 @@
         }
 
         .customer-list li {
-            background-color: #fff;
+            background-color: white;
             padding: 20px;
-            border-radius: 15px; /* Rounded borders for patient cards */
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-            position: relative;
-            transition: all 0.4s ease; /* Smooth transition for removal */
+        }
+
+        .customer-list li.rdv {
+            background-color: #eafbea;
+        }
+
+        .customer-time::before {
+            content: '⏰';
+            margin-right: 8px;
+            color: #0071e3;
         }
 
         .customer-name {
@@ -129,44 +103,24 @@
             font-weight: bold;
         }
 
-        .customer-time,
-        .customer-type {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-
         .action-button {
             background-color: #28a745;
             color: white;
             border: none;
-            padding: 6px 10px; /* Smaller "Servi" button */
-            border-radius: 25px;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
-            position: absolute;
-            right: 10px; /* Positioned to the far right */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .icon {
             margin-right: 8px;
         }
 
-        /* Highlight RDV visit type in green */
-        .rdv-highlight {
-            background-color: #d4edda;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .time-visit-wrapper {
-                flex-direction: column;
-            }
-        }
-
-        /* Grey out unavailable time slots */
-        select option.unavailable {
-            background-color: #ccc;
-            pointer-events: none;
+        select option {
+            padding: 10px;
         }
     </style>
 </head>
@@ -178,48 +132,36 @@
     </div>
 
     <div class="input-section">
-        <div class="input-wrapper">
-            <span class="icon">👤</span>
-            <input type="text" id="patientName" placeholder="Entrez le nom du patient">
-        </div>
+        <input type="text" id="patientName" placeholder="Entrez le nom du patient">
 
         <div class="time-visit-wrapper">
-            <div class="input-wrapper">
-                <span class="icon">⏰</span>
-                <select id="hourPicker">
-                    <option value="07">07</option>
-                    <option value="08">08</option>
-                    <option value="09">09</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                    <option value="13">13</option>
-                    <option value="14">14</option>
-                    <option value="15">15</option>
-                    <option value="16">16</option>
-                    <option value="17">17</option>
-                    <option value="18">18</option>
-                    <option value="19">19</option>
-                </select>
-            </div>
+            <select id="hourPicker">
+                <option value="07">07</option>
+                <option value="08">08</option>
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+            </select>
 
-            <div class="input-wrapper minute-wrapper">
-                <span class="icon">🕑</span>
-                <select id="minutePicker">
-                    <option value="00">00</option>
-                    <option value="15">15</option>
-                    <option value="30">30</option>
-                    <option value="45">45</option>
-                </select>
-            </div>
+            <select id="minutePicker">
+                <option value="00">00</option>
+                <option value="15">15</option>
+                <option value="30">30</option>
+                <option value="45">45</option>
+            </select>
 
-            <div class="input-wrapper">
-                <span class="icon">📆</span>
-                <select id="visitType">
-                    <option value="Walkin">🚶 Walk-in</option>
-                    <option value="RDV">📆 RDV</option>
-                </select>
-            </div>
+            <select id="visitType">
+                <option value="Walkin">🚶 Walk-in</option>
+                <option value="RDV">📆 RDV</option>
+            </select>
         </div>
 
         <button onclick="addPatient()">Ajouter un patient</button>
@@ -231,55 +173,112 @@
 </div>
 
 <script>
-    function addPatient() {
-        var name = document.getElementById('patientName').value;
-        var hour = document.getElementById('hourPicker').value;
-        var minute = document.getElementById('minutePicker').value;
-        var visitType = document.getElementById('visitType').value;
+    let selectedTimes = [];
 
-        if (name === "") {
-            alert("Please enter the patient's name.");
+    async function addPatient() {
+        const patientName = document.getElementById('patientName').value.trim();
+        const selectedHour = document.getElementById('hourPicker').value;
+        const selectedMinute = document.getElementById('minutePicker').value;
+        const patientTime = `${selectedHour}:${selectedMinute}`;
+        const visitType = document.getElementById('visitType').value;
+
+        if (patientName === '') {
+            alert('Le nom du patient est obligatoire');
             return;
         }
 
-        var time = hour + ":" + minute;
-        var patientList = document.getElementById('patientList');
-        
-        // Grey out selected time slot
-        document.querySelector(`#hourPicker option[value="${hour}"]`).classList.add('unavailable');
-        document.querySelector(`#minutePicker option[value="${minute}"]`).classList.add('unavailable');
-        
-        var newPatient = document.createElement('li');
-        newPatient.className = 'patient-card';
-        if (visitType === "RDV") {
-            newPatient.classList.add("rdv-highlight"); // Highlight RDV cards
+        if (selectedTimes.includes(patientTime)) {
+            alert('This time is already selected for another patient.');
+            return;
         }
-        
-        newPatient.innerHTML = `
-            <div>
-                <span class="customer-name">${name}</span>
-                <div class="customer-time">Time: ${time}</div>
-                <div class="customer-type">${visitType}</div>
-            </div>
-            <button class="action-button" onclick="removePatient(this)">✔️ Servi</button>
-        `;
 
-        patientList.appendChild(newPatient);
+        const patient = { name: patientName, time: patientTime, type: visitType };
 
-        // Clear input fields after adding
-        document.getElementById('patientName').value = "";
-        document.getElementById('hourPicker').value = "07";
-        document.getElementById('minutePicker').value = "00";
-        document.getElementById('visitType').value = "Walkin";
+        try {
+            // Send patient data to the server
+            await fetch('/api/waitlist', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(patient)
+            });
+            selectedTimes.push(patientTime);
+            displayPatients();
+        } catch (error) {
+            console.error('Error adding patient:', error);
+        }
+
+        document.getElementById('patientName').value = '';
     }
 
-    function removePatient(button) {
-        var patientCard = button.parentElement;
-        patientCard.style.opacity = '0'; // Smooth fade out effect
-        setTimeout(() => {
-            patientCard.remove();
-        }, 400); // Delay removal for smooth transition
+    async function displayPatients() {
+        try {
+            const response = await fetch('/api/waitlist');
+            const patients = await response.json();
+            const list = document.getElementById('patientList');
+            selectedTimes = []; // Reset the selected times
+
+            list.innerHTML = '';
+
+            patients.forEach((patient, index) => {
+                const li = document.createElement('li');
+                li.className = patient.type === 'RDV' ? 'rdv' : '';
+
+                selectedTimes.push(patient.time); // Add existing patient times to the selectedTimes list
+
+                li.innerHTML = `
+                    <span class="customer-name">${index + 1}. ${patient.name}</span>
+                    <span class="customer-time">${patient.time}</span>
+                    <span class="visit-type">${patient.type === 'Walkin' ? '🚶 Walk-in' : '📆 RDV'}</span>
+                    <button class="action-button" onclick="removePatient(${patient.id}, this)">
+                        <span class="icon">✔️</span> Servi
+                    </button>
+                `;
+                list.appendChild(li);
+            });
+
+            updateTimePickers(); // Update the time pickers to reflect selected times
+        } catch (error) {
+            console.error('Error fetching patients:', error);
+        }
     }
+
+    function updateTimePickers() {
+        const hourPicker = document.getElementById('hourPicker');
+        const minutePicker = document.getElementById('minutePicker');
+
+        for (let hour of hourPicker.options) {
+            for (let minute of minutePicker.options) {
+                const time = `${hour.value}:${minute.value}`;
+                if (selectedTimes.includes(time)) {
+                    hour.disabled = true;
+                    minute.disabled = true;
+                } else {
+                    hour.disabled = false;
+                    minute.disabled = false;
+                }
+            }
+        }
+    }
+
+    async function removePatient(id, button) {
+        try {
+            await fetch(`/api/waitlist/${id}`, {
+                method: 'DELETE'
+            });
+
+            const li = button.closest('li');
+            li.remove();
+            displayPatients();
+        } catch (error) {
+            console.error('Error removing patient:', error);
+        }
+    }
+
+    window.onload = function() {
+        displayPatients();
+    };
 </script>
 
 </body>
