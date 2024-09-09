@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -58,15 +59,6 @@
             width: 100%;
         }
 
-        /* Adjust spacing for patientName input */
-        #patientName {
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 18px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
         .input-section button {
             background-color: #00a8ff;
             color: white;
@@ -78,17 +70,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .plus-icon {
-            margin-left: 8px;
-            color: white;
-        }
-
-        .disabled-option {
-            background-color: #e0e0e0;
-            color: #a0a0a0;
-            cursor: not-allowed;
         }
 
         .customer-list ul {
@@ -105,7 +86,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
         .customer-list li.rdv {
@@ -133,34 +113,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .action-button:hover {
-            background-color: #218838;
-            box-shadow: 0 8px 20px rgba(0, 168, 255, 0.3);
-        }
-
-        .action-button:disabled {
-            background-color: #ddd;
-            cursor: not-allowed;
         }
 
         .icon {
             margin-right: 8px;
         }
 
-        .fade-out {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-
         select option {
             padding: 10px;
-        }
-
-        .option-icon {
-            margin-right: 8px;
         }
     </style>
 </head>
@@ -178,7 +138,17 @@
             <select id="hourPicker">
                 <option value="07">07</option>
                 <option value="08">08</option>
-                <!-- Add more hours as needed -->
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
             </select>
 
             <select id="minutePicker">
@@ -194,9 +164,7 @@
             </select>
         </div>
 
-        <button onclick="addPatient()">Ajouter un patient
-            <span class="plus-icon">➕</span>
-        </button>
+        <button onclick="addPatient()">Ajouter un patient</button>
     </div>
 
     <div class="customer-list">
@@ -249,8 +217,9 @@
             const response = await fetch('/api/waitlist');
             const patients = await response.json();
             const list = document.getElementById('patientList');
-            list.innerHTML = '';
             selectedTimes = []; // Reset the selected times
+
+            list.innerHTML = '';
 
             patients.forEach((patient, index) => {
                 const li = document.createElement('li');
@@ -278,23 +247,16 @@
     function updateTimePickers() {
         const hourPicker = document.getElementById('hourPicker');
         const minutePicker = document.getElementById('minutePicker');
-        const fullTimeList = [];
 
         for (let hour of hourPicker.options) {
             for (let minute of minutePicker.options) {
                 const time = `${hour.value}:${minute.value}`;
-                const timeOption = `${hour.value}:${minute.value}`;
-
-                if (selectedTimes.includes(timeOption)) {
+                if (selectedTimes.includes(time)) {
                     hour.disabled = true;
                     minute.disabled = true;
-                    hour.classList.add('disabled-option');
-                    minute.classList.add('disabled-option');
                 } else {
                     hour.disabled = false;
                     minute.disabled = false;
-                    hour.classList.remove('disabled-option');
-                    minute.classList.remove('disabled-option');
                 }
             }
         }
@@ -307,12 +269,8 @@
             });
 
             const li = button.closest('li');
-            li.classList.add('fade-out');
-
-            setTimeout(() => {
-                li.remove();
-                displayPatients();
-            }, 300); // Delay to match the fade-out animation
+            li.remove();
+            displayPatients();
         } catch (error) {
             console.error('Error removing patient:', error);
         }
