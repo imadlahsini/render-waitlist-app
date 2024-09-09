@@ -64,6 +64,19 @@
             content: '📆';
             margin-right: 8px;
         }
+
+        /* Style for the Play Sound button */
+        .play-button {
+            background-color: #00a8ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -73,9 +86,12 @@
 </div>
 
 <audio id="notificationSound" preload="auto">
-    <source src="data:audio/wav;base64,UklGRiTIBgBXQVZFZm10IBAAAAABAAIARKwAABCxAgAEABAAZGF0YQDIBgAAAP//AAACAAAA/v8BAAEA/v8BAAIA/v/+/wIAAgD/vwH/AgD/BAD/AAD/BAD/BQAAAAD/AgD//wIAAAEAAAAA/wH/AgD/+gAA/v8CAAIAAgAAAQD+AAIAAQD/AgD/AQD+AAD/AwAAAAD/BAD/AAEAAAAA/v/+/wEAAAAA/wEAAgAAAQD/+QIA/wEAAAAA/wAAAgD/AgAA/wAAAQD/BAD/AgD/AAAAAQD+AAD/+gD/AgD/+wIAAAD//wH/AgAA/wAA/wIAAAEA/v8AAAAA/v/+AAAAAAD/AgAAAgAA/wIAAAAAAP//AAD/AAAAAQD/AgD/AQD/AAAAAAD+AgAA/wAAAgAA/wAA/wIAAAEA/wEAAQD//wD/+gD/AAD/AAAAAAD/AAD/AAAAAAD/AAAAAAD/AQD/AAAAAA==" type="audio/wav">
+    <source src="data:audio/wav;base64,UklGRiTIBgBXQVZFZm10IBAAAAABAAIARKwAABCxAgAEABAAZGF0YQDIBgAAAP//AAACAAAA/v8BAAEA/v8BAAIA/v/+/wIAAgD/vwH/AgD/BAD/AAD/BAD/BQAAAAD/AgD//wIAAAEAAAAA/wH/AgD/+gAA/v8CAAIAAgAAAQD+AAIAAQD/AgD/AQD+AAD/AwAAAAD/BAD/AAEAAAAA/v/+/wEAAAAA/wEAAgAAAQD/+QIA/wEAAAAA/wAAAgD/AgAA/wAAAQD/BAD/AgD/AAAAAQD+AAD/+gD/AgD/+wIAAAD//wH/AgAA/wAA/wIAAAEA/v8AAAAA/v/+AAAAAAD/AgAAAgAA/wIAAAAAAP//AAD/AAAAAQD/AgD/AQD/AAAAAAD+AgAA/wAAAgAA/wAA/wIAAAEA/wEAAQD//wD/+gD/AAD/AAAAAAD/AAD/AAAAAAD/AAAAAAD/AQD/AA... 
     Your browser does not support the audio element.
 </audio>
+
+<!-- Fallback Button to manually play sound -->
+<button class="play-button" onclick="document.getElementById('notificationSound').play();">Play Sound</button>
 
 <script>
     let currentPatients = [];
